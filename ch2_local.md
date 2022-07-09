@@ -40,3 +40,15 @@ The unit of isolation in xv6 is a process. Xv6 uses separate page table for each
 Each process has two stacks: a user stack and a kernel stack(p->kstack).
 A process can make a system call by executing the RISC-V ecall instruction that rasing the hardware privilege level and changes the program counter to a kernel-defined entry point.And kernel can switch back to user mode by calling the sret instruction.
 Generally,a process bundles two design ideas: an address space to give illusion of merory and thread to give the process the illision of its own CPU.
+
+## Code:starting xv6 and the first process
+
+>> 1.when RISC-V computer starts,it runs a bootloader stored in read-only memory.Then bootloader loads the xv6 kernel into memory.The RISC-V starts with paging hardware disabled.
+>> 2.The loader loads xv6 kernel into memory at physical memory 0x80000000,because 0x0:0x80000000 contains I/O devices
+>> 3.Instructions at  _entry setup a stack called stack0 and C code declares it in start.c. Code at _entry loads the stack pointer at stack0+4096,because the stack on RISC-V grows down.
+>> 4.Before switching to supervisor mode,xv6 sets previous privilege mode to supervisor in the register mstatus,setting return address to main by writing main's address into register mepc,then by calling mret instruction ,xv6 will enter supervisor mode.Before that ,xv6 delegates all interrupts and exceptions to supervisor mode,disable paging mode ,and enable timing interrupts.
+>>5.Aftering main function doing initializing devices,it creates first process by calling userinit.In userinit ,process re-enters the kernel by invoking exec system call.Init function will create a new concole device if needed and oepns it as file descriptors 0,1,2.Then it starts a shell on the console.
+>> ![image-20220709223832974](D:\offer\operating_system\weihao.github.io\ch2\image-20220709223832974.png)
+
+
+
