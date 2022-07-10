@@ -30,12 +30,12 @@ system code that runs in supervisor mode, and execute the bulk of the operating 
 
 ## Code:xv6 organization
 
-<img src="C:\Users\WYX\AppData\Roaming\Typora\typora-user-images\image-20220706221915296.png" alt="image-20220706221915296" style="zoom:50%;" />
+<img src="https://github.com/WeihaoZhang/weihao.github.io/blob/main/ch2/image-20220706221915296.png" alt="image-20220706221915296" style="zoom:50%;" />
 
 ## Process overview
 The unit of isolation in xv6 is a process. Xv6 uses separate page table for each process defines process's address space.Trampoline pae contains the code to transition in and out of the kernel and mapping trapframe is necessary to save and restore the state of user porcess.
 
-<img src="C:\Users\WYX\AppData\Roaming\Typora\typora-user-images\image-20220706224525430.png" alt="image-20220706224525430" style="zoom:50%;" />
+<img src="https://github.com/WeihaoZhang/weihao.github.io/blob/main/ch2/image-20220706224525430.png" alt="image-20220706224525430" style="zoom:50%;" />
 
 Each process has two stacks: a user stack and a kernel stack(p->kstack).
 A process can make a system call by executing the RISC-V ecall instruction that rasing the hardware privilege level and changes the program counter to a kernel-defined entry point.And kernel can switch back to user mode by calling the sret instruction.
@@ -48,7 +48,7 @@ Generally,a process bundles two design ideas: an address space to give illusion 
 >> 3.Instructions at  _entry setup a stack called stack0 and C code declares it in start.c. Code at _entry loads the stack pointer at stack0+4096,because the stack on RISC-V grows down.
 >> 4.Before switching to supervisor mode,xv6 sets previous privilege mode to supervisor in the register mstatus,setting return address to main by writing main's address into register mepc,then by calling mret instruction ,xv6 will enter supervisor mode.Before that ,xv6 delegates all interrupts and exceptions to supervisor mode,disable paging mode ,and enable timing interrupts.
 >>5.Aftering main function doing initializing devices,it creates first process by calling userinit.In userinit ,process re-enters the kernel by invoking exec system call.Init function will create a new concole device if needed and oepns it as file descriptors 0,1,2.Then it starts a shell on the console.
->> ![image-20220709223832974](D:\offer\operating_system\weihao.github.io\ch2\image-20220709223832974.png)
+>> ![image-20220709223832974](https://github.com/WeihaoZhang/weihao.github.io/blob/main/ch2/image-20220709223832974.png)
 
 
 
