@@ -19,3 +19,13 @@
 >> Kernel configures the layout of its address space to give itself access to physical memory and various resources at predictable virtual address.
 >>
 >> <img src="C:\Users\WYX\AppData\Roaming\Typora\typora-user-images\image-20220712225232572.png" alt="image-20220712225232572" style="zoom:50%;" />
+>> The kernel gets at RAM and memory-mapped device registers using "direct mapping",mapping the resources at virtual address equal to the physical address.There are a couple of kernel virtual addresses that aren't direct-mapped:
+>>1.trampoline page,at the top of virtual address space.A physical page holding the trampoline code is mapped twice in the virtual address space of the kernel:once at top of virtual address space and once with a direct mapping.
+>>2.The kernel stack page, mapped high so that below xv6 can leave an unmapped guard page.The guard page's PTE is invalid,so that kernle will panic if it overflows a kernel stack.  
+
+
+## Code: creating an address space
+
+>> The center data structure is pagetable_t,which is really a pointer to a RISC-V root page-table:a pagetable_t may be either the kernel page table or per-process page tables.The central functions are walk,which finds the PTE for a virtual address and mappages,which installs PTEs for new mappings.
+>> code is showed in vm.c
+>> When xv6 changes a page table ,it must tell CPU to invalidate correspoding cached TLB entries.RISC-V has an instruction sfence.vma that flushes the current CPU's TLB.To aoid the complete TLB,RISC-V CPUs may support address space identifiers ASIDs.The kernel can flush the TLB entries for particular address space
