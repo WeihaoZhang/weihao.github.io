@@ -29,3 +29,11 @@
 >> The center data structure is pagetable_t,which is really a pointer to a RISC-V root page-table:a pagetable_t may be either the kernel page table or per-process page tables.The central functions are walk,which finds the PTE for a virtual address and mappages,which installs PTEs for new mappings.
 >> code is showed in vm.c
 >> When xv6 changes a page table ,it must tell CPU to invalidate correspoding cached TLB entries.RISC-V has an instruction sfence.vma that flushes the current CPU's TLB.To aoid the complete TLB,RISC-V CPUs may support address space identifiers ASIDs.The kernel can flush the TLB entries for particular address space
+
+## Physical memory allocation
+
+>> xv6 uses physical memory between the end of kernel adn PHYSTOP for run-time allocation.It allocates and frees whole 4096-byets pages at a time.Free pages are threaded by a linked list through the pages themselves.
+
+## Code:Physical memory allocator
+
+>>The allocaor's data structure is a free lsit of physical memory  that are available for allocation.Each free page's list element is a struct run. Thre free list is stored in a free page,protected by a spin lock.
